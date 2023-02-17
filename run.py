@@ -34,6 +34,9 @@ class TimeSeriesForecastingModel:
         cv_results = cross_validation(self.model, initial=cv_initial, period=cv_period, horizon=cv_horizon)
         perf_metrics = performance_metrics(cv_results)
         return perf_metrics
+    
+    def save_forecast(self, forecast: pd.DataFrame) -> None: 
+        forecast.to_csv("forecasted.csv")
         
     def plot_forecast(self, forecast: pd.DataFrame) -> None:
         fig = self.model.plot(forecast, uncertainty=True)
@@ -49,7 +52,7 @@ if __name__ == "__main__":
         'changepoint_prior_scale': 0.05,
         'seasonality_mode': 'multiplicative',
         'holidays_prior_scale': 10.0,
-        'daily_seasonality': False,
+        'daily_seasonality': True,
         'weekly_seasonality': True,
         'yearly_seasonality': True
     }
@@ -61,8 +64,8 @@ if __name__ == "__main__":
 
     model.train(df)
 
-
-    forecast = model.predict(periods=365)
+    forecast = model.predict(periods=730)
+    model.save_forecast(forecast)
 
     model.plot_forecast(forecast)
     print()
